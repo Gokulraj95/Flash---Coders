@@ -1,0 +1,91 @@
+import requests
+import bs4
+import webbrowser
+import selenium
+from urllib.request import urlopen as Ureq
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+#It can access the google dataset search website
+#Enter any keyword to search related Datasets
+#It provides all corresponding Datasets available in that website
+
+def data_to_be_Searched(u):
+ q = u
+ data_to_be_Searched.url  = 'https://datasetsearch.research.google.com/search?query=' + q
+ res = requests.get(data_to_be_Searched.url)
+ soup = bs4.BeautifulSoup(res.text, 'html')
+ print ('\n'+'SELECT THE DATASET FROM THE FOLLOWING'+'\n')
+ for k in soup.select('h1'):
+   print(k.text)
+
+#Gets the input from the user for Dataset Title
+#Enter into the user selected title webpage
+#Retrives  all METADATA from the dataset like DATA_INFO, CITED BY,AVAILABLE DOWNLOAD FORMATS and DESCRIPTION
+
+
+
+def Data_Set_Info(w):
+ option = Options()
+ option.headless = True
+ Data_Set_Info.driver = webdriver.Remote("http://127.0.0.1:4444/wd/hub", DesiredCapabilities.CHROME)
+ url = data_to_be_Searched.url
+ Data_Set_Info.driver.get(url)   
+ r = w
+ login_form = Data_Set_Info.driver.find_element_by_xpath("//h1[contains(text(),'{}')]".format(r))
+ check = login_form.click() 
+ urr = Data_Set_Info.driver.current_url
+ ulr = requests.get(urr)
+ Data_Set_Info.soup = BeautifulSoup(ulr.content, 'html.parser')
+ Data_Set_Info.soup.prettify()
+
+
+        
+ print('\n'+"DATA INFO: "+'\n')
+ for i in Data_Set_Info.soup.select('.ukddFf'):
+    print(i.text)
+    
+  
+    
+ print('\n'+"CITED BY: "+'\n')
+ for m in Data_Set_Info.soup.select('.gHkX8d'):
+    print('\n'+ m.text)
+ anchors = Data_Set_Info.soup.find_all('a', {'class': 'ZKydGb', 'href': True})
+ for anchor in anchors:
+    print (anchor['href']+'\n')   
+    
+  
+    
+ for l in Data_Set_Info.soup.select('.cycj3'):
+    print('\n'+"AVAILABLE DOWNLOAD FORMATS: "+'\n')      
+    print('\n'+ l.text) 
+    
+ 
+    
+ print('\n'+"DESCRIPTION: ")
+ for j in Data_Set_Info.soup.select('.iH9v7b'):
+        k = j.get_text().strip("")
+        print ('\n'+k)
+        
+#Receives an input from the user to download the Dataset or not
+#Provide link/links to download the dataset
+ 
+
+ anchors = Data_Set_Info.soup.find_all('a', {'class': 'WpHeLc', 'href': True, 'aria-label':True})
+ print('\n'+"You can download the Dataset from the below link/links:"+'\n')
+ for anchor in anchors:
+    print(anchor['aria-label'] +'\n')
+    print (anchor['href']+'\n')
+ 
+    
+OUTPUT: 
+
+data_to_be_Searched('Keyword to search')
+
+Data_Set_Info('Dataset title name)
